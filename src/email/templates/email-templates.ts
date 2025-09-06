@@ -26,7 +26,7 @@ export const emailVerificationTemplate = (otp: string) => `
       
       <!-- Validity notice -->
       <p style="font-size: 16px; color: #6B7280; line-height: 1.6; margin: 0 0 25px 0;">
-        This OTP is valid for the next 10 minutes. Please enter this code in the verification form to activate your account.
+        This OTP is valid for the next 15 minutes. Please enter this code in the verification form to activate your account.
       </p>
       
       <!-- Additional instructions -->
