@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
-import { UpdateEmailDto } from './dto/update-email.dto';
+import { config } from 'src/config';
+import { transporter } from './config/nodemailer';
 
 @Injectable()
 export class EmailService {
-  create(createEmailDto: CreateEmailDto) {
-    return 'This action adds a new email';
-  }
+  async sendEmail(createEmailDto: CreateEmailDto) {
+    try {
+      const mailOptions = {
+        from: `"Naga Collections" <${config.GMAIL_USER}>`,
+        to: createEmailDto.to,
+        subject: createEmailDto.subject,
+        html: createEmailDto.body,
+      };
 
-  findAll() {
-    return `This action returns all email`;
-  }
+      const info = await transporter.sendMail(mailOptions);
 
-  findOne(id: number) {
-    return `This action returns a #${id} email`;
-  }
-
-  update(id: number, updateEmailDto: UpdateEmailDto) {
-    return `This action updates a #${id} email`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} email`;
+      console.log('Email sent successfully:', info.messageId);
+      return {
+        success: true,
+        messageId: info.messageId,
+        response: info.response,
+      };
+    } catch (error: any) {
+      console.error(
+        'Error sending email via Nodemailer:',
+        error.message || error,
+      );
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
   }
 }

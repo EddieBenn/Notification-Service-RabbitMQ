@@ -12,4 +12,6 @@ export const config = {
   SIGNUP_ROUTING_KEY: 'user.created',
   VERIFIED_ROUTING_KEY: 'user.verified',
   NODE_ENV: process.env.NODE_ENV || 'development',
+  GMAIL_USER: process.env.GMAIL_USER || '',
+  GMAIL_PASSWORD: process.env.GMAIL_PASSWORD || '',
 };
