@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
-import { config } from 'src/config';
 import { transporter } from './config/nodemailer';
 
 @Injectable()
@@ -8,7 +7,7 @@ export class EmailService {
   async sendEmail(createEmailDto: CreateEmailDto) {
     try {
       const mailOptions = {
-        from: `"Naga Collections" <${config.GMAIL_USER}>`,
+        from: createEmailDto.from,
         to: createEmailDto.to,
         subject: createEmailDto.subject,
         html: createEmailDto.body,

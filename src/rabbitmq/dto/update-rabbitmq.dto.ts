@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateRabbitmqDto } from './create-rabbitmq.dto';
+import { OTPNotificationDto } from './create-rabbitmq.dto';
 
-export class UpdateRabbitmqDto extends PartialType(CreateRabbitmqDto) {}
+export class UpdateRabbitmqDto extends PartialType(OTPNotificationDto) {}

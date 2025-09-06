@@ -1,26 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRabbitmqDto } from './dto/create-rabbitmq.dto';
-import { UpdateRabbitmqDto } from './dto/update-rabbitmq.dto';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { EmailService } from '../email/email.service';
+import {
+  OTPNotificationDto,
+  WelcomeNotificationDto,
+} from './dto/create-rabbitmq.dto';
+import {
+  emailVerificationTemplate,
+  welcomeUserTemplate,
+} from 'src/email/templates/email-templates';
+import { config } from 'src/config';
 
 @Injectable()
 export class RabbitmqService {
-  create(createRabbitmqDto: CreateRabbitmqDto) {
-    return 'This action adds a new rabbitmq';
+  constructor(private readonly emailService: EmailService) {}
+
+  @RabbitSubscribe({
+    exchange: config.RABBITMQ_EXCHANGE,
+    routingKey: config.SIGNUP_ROUTING_KEY,
+    queue: config.OTP_QUEUE,
+  })
+  async handleOTPNotification(data: OTPNotificationDto) {
+    try {
+      await this.emailService.sendEmail({
+        to: data.email,
+        subject: 'Verify Your Email',
+        body: emailVerificationTemplate(data.otp),
+        from: `"Naga Collections" <noreply@nagacollections.com>`,
+      });
+    } catch (error) {
+      console.error('Failed to send OTP email:', error);
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all rabbitmq`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} rabbitmq`;
-  }
-
-  update(id: number, updateRabbitmqDto: UpdateRabbitmqDto) {
-    return `This action updates a #${id} rabbitmq`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} rabbitmq`;
+  @RabbitSubscribe({
+    exchange: config.RABBITMQ_EXCHANGE,
+    routingKey: config.VERIFIED_ROUTING_KEY,
+    queue: config.WELCOME_QUEUE,
+  })
+  async handleWelcomeNotification(data: WelcomeNotificationDto) {
+    try {
+      await this.emailService.sendEmail({
+        to: data.email,
+        subject: 'Welcome to Naga Collections!',
+        body: welcomeUserTemplate(data.first_name),
+        from: `"Naga Collections" <noreply@nagacollections.com>`,
+      });
+    } catch (error) {
+      console.error('Failed to send welcome email:', error);
+      throw error;
+    }
   }
 }
