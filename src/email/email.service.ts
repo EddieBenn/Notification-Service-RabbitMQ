@@ -15,7 +15,7 @@ export class EmailService {
 
       const info = await transporter.sendMail(mailOptions);
 
-      console.log('Email sent successfully:', info.messageId);
+      console.log('Email sent successfully:', createEmailDto.to);
       return {
         success: true,
         messageId: info.messageId,
